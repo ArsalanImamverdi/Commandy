@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
@@ -50,6 +51,14 @@ namespace Commandy.Internals.CommandExecutor
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
+            if (command.Options.EnvironmentVariables != null && command.Options.EnvironmentVariables.Count > 0)
+            {
+                foreach (KeyValuePair<string, string> variable in command.Options.EnvironmentVariables)
+                    startInfo.EnvironmentVariables.Add(variable.Key, variable.Value);
+            }
+            if (!string.IsNullOrEmpty(command.Options.WorkingDirectory))
+                startInfo.WorkingDirectory = command.Options.WorkingDirectory;
+
             Process process = new Process()
             {
                 StartInfo = startInfo,

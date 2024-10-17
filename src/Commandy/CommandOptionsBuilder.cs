@@ -21,6 +21,16 @@
             options.Arguments.Add(new CommandArguments() { Flag = argument, Value = value });
             return this;
         }
+        public CommandOptionsBuilder AddEnvironmentVariable(string key, string value)
+        {
+            options.EnvironmentVariables.Add(key, value);
+            return this;
+        }
+        public CommandOptionsBuilder WorkingDirectory(string workingDirectory)
+        {
+            options.WorkingDirectory = workingDirectory;
+            return this;
+        }
         public CommandOptions Build()
         {
             return options;
