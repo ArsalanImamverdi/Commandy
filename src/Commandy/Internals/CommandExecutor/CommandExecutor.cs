@@ -40,8 +40,9 @@ namespace Commandy.Internals.CommandExecutor
         }
         private int GetProcess(Command command, CancellationToken cancellationToken)
         {
-            string executable = !command.Options.UseShell ? $"{GetShell()}" : command.Options.Command;
-            string arguments = !command.Options.UseShell ? $"{GetShellArgument()} {command.Options.Command} {command.Options.GetArguments()}" : command.Options.GetArguments();
+            string executable = command.Options.UseShell ? $"{GetShell()}" : command.Options.Command;
+            string arguments = command.Options.UseShell ? $"{GetShellArgument()} {command.Options.Command} {command.Options.GetArguments()}" : command.Options.GetArguments();
+            command.command = $"{executable} {arguments}";
             var startInfo = new ProcessStartInfo()
             {
                 FileName = executable,
@@ -95,7 +96,7 @@ namespace Commandy.Internals.CommandExecutor
                         command.ReceiveError(data);
                         break;
                     case DataReceivedType.Data:
-                        _data.Append(data);
+                        _data.AppendLine(data);
                         command.ReceiveData(data);
                         break;
                 }

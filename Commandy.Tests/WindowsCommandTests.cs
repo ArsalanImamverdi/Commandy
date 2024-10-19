@@ -1,4 +1,6 @@
-﻿namespace Commandy.Tests
+﻿using System.Diagnostics;
+
+namespace Commandy.Tests
 {
     public class WindowsCommandTests
     {
@@ -53,6 +55,13 @@
             Assert.Empty(result.Output);
             Assert.NotEmpty(result.Error);
         }
-
+        [Fact]
+        public void Test()
+        {
+            Debugger.Launch();
+            string imageFileName = Guid.NewGuid().ToString();
+            var command = Commandy.Command.CreateCommand("ffprobe", opt => opt.AddArgument("-v", "error").AddArgument("-show_error").AddArgument("-show_streams").AddArgument(imageFileName));
+            var result = command.Execute();
+        }
     }
 }

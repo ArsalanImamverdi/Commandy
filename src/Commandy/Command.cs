@@ -10,7 +10,11 @@ namespace Commandy
         public delegate void DataReceivedHandler(object sender, DataCommandEventArgs e);
         public event DataReceivedHandler OnDataReceived;
         public event ErrorReceivedHandler OnErrorReceived;
-
+        internal string command { get; set; }
+        public string GetCommand()
+        {
+            return command;
+        }
         public CommandOptions Options { get; }
         public static Command CreateCommand(string command, Func<CommandOptionsBuilder, CommandOptionsBuilder> commandOptionsBuilder)
         {
