@@ -9,7 +9,7 @@
         {
             var argument = Flag;
             if (!string.IsNullOrEmpty(Value))
-                argument = $"{Flag} {Value}";
+                argument = string.Join(" ", new string[] { argument, Value });
             return argument;
         }
     }
