@@ -1,7 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<Title>Commandy</Title>
+		<Authors>MohamadArsalan Imamverdi</Authors>
+		<Description>A powerful, cross-platform .NET library for executing shell commands and processes. It provides a simple, intuitive API for running commands on both Windows and Linux environments, with support for synchronous and asynchronous execution.</Description>
+		<PackageProjectUrl>https://github.com/ArsalanImamverdi/Commandy</PackageProjectUrl>
+		<PackageReadmeFile>readme.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/ArsalanImamverdi/Commandy</RepositoryUrl>
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageIconUrl>file://icon.png</PackageIconUrl>
+	</PropertyGroup>
 
+	<ItemGroup>
+		<None Include="..\..\readme.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\..\icon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 </Project>
