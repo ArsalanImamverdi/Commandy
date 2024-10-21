@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<Compile Include="..\Shared\ProcessHelper\*.cs" Link="Internals\ProcessHelper\%(Filename)%(Extension)" />
+		<Compile Include="..\Shared\ShellHelper\*.cs" Link="Internals\ShellHelper\%(Filename)%(Extension)" />
+		<Compile Include="..\Shared\*.cs" Link="Internals\%(Filename)%(Extension)" />
+	</ItemGroup>
+</Project>
