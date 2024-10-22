@@ -32,27 +32,27 @@ namespace Commandy.Abstractions
         /// <summary>
         /// Executes the command synchronously.
         /// </summary>
-        /// <returns>A <see cref="CommandResult"/> indicating the outcome of the execution.</returns>
-        CommandResult Execute();
+        /// <returns>A <see cref="ICommandResult"/> indicating the outcome of the execution.</returns>
+        ICommandResult Execute();
 
         /// <summary>
         /// Executes the command synchronously with cancellation support.
         /// </summary>
         /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
-        /// <returns>A <see cref="CommandResult"/> indicating the outcome of the execution, or indicates cancellation.</returns>
-        CommandResult Execute(CancellationToken cancellationToken);
+        /// <returns>A <see cref="ICommandResult"/> indicating the outcome of the execution, or indicates cancellation.</returns>
+        ICommandResult Execute(CancellationToken cancellationToken);
 
         /// <summary>
         /// Executes the command asynchronously.
         /// </summary>
-        /// <returns>A <see cref="Task{CommandResult}"/> for non-blocking execution.</returns>
-        Task<CommandResult> ExecuteAsync();
+        /// <returns>A <see cref="Task{ICommandResult}"/> for non-blocking execution.</returns>
+        Task<ICommandResult> ExecuteAsync();
 
         /// <summary>
         /// Executes the command asynchronously with cancellation support.
         /// </summary>
         /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
-        /// <returns>A <see cref="Task{CommandResult}"/> that can be canceled.</returns>
-        Task<CommandResult> ExecuteAsync(CancellationToken cancellationToken);
+        /// <returns>A <see cref="Task{ICommandResult}"/> that can be canceled.</returns>
+        Task<ICommandResult> ExecuteAsync(CancellationToken cancellationToken);
     }
 }

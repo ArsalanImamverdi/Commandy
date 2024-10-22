@@ -34,12 +34,12 @@ namespace Commandy.Internals.Command
             Options = options;
         }
 
-        public Abstractions.CommandResult Execute()
+        public ICommandResult Execute()
         {
             return Execute(CancellationToken.None);
         }
 
-        public Abstractions.CommandResult Execute(CancellationToken cancellationToken)
+        public ICommandResult Execute(CancellationToken cancellationToken)
         {
             OnDataReceived += (sender, e) =>
             {
@@ -55,12 +55,12 @@ namespace Commandy.Internals.Command
             return new CommandResult(process.ExitCode, _data.ToString(), _error.ToString());
         }
 
-        public Task<Abstractions.CommandResult> ExecuteAsync()
+        public Task<ICommandResult> ExecuteAsync()
         {
             return ExecuteAsync(CancellationToken.None);
         }
 
-        public Task<Abstractions.CommandResult> ExecuteAsync(CancellationToken cancellationToken)
+        public Task<ICommandResult> ExecuteAsync(CancellationToken cancellationToken)
         {
             return Task.Run(() => Execute(cancellationToken));
         }
