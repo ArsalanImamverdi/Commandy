@@ -1,0 +1,33 @@
+<Project>
+    <PropertyGroup>
+        <Title>$(AssemblyName)</Title>
+		<Authors>MohamadArsalan Imamverdi</Authors>
+		<PackageId>$(AssemblyName)</PackageId>
+        <Description>A powerful, cross-platform .NET library for executing shell commands and
+            processes. It provides a simple, intuitive API for running commands on both Windows and
+            Linux environments, with support for synchronous and asynchronous execution.</Description>
+        <PackageProjectUrl>https://github.com/ArsalanImamverdi/Commandy</PackageProjectUrl>
+        <PackageReadmeFile>readme.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/ArsalanImamverdi/Commandy</RepositoryUrl>
+        <PackageIcon>icon.png</PackageIcon>
+        <Icon>icon.png</Icon>
+		<PackageTags>command shell process execution cross-platform</PackageTags>
+		<Copyright>Copyright © 2024</Copyright>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageReleaseNotes>Initial package publish</PackageReleaseNotes>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="..\..\readme.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+        <None Include="..\..\icon.png">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+        <None Include="..\..\LICENSE">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+    </ItemGroup>
+</Project>

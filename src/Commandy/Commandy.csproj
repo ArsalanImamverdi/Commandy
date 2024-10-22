@@ -1,39 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+	<Import Project="..\..\version.props"></Import>
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<Title>Commandy</Title>
-		<Authors>MohamadArsalan Imamverdi</Authors>
-		<Description>A powerful, cross-platform .NET library for executing shell commands and processes. It provides a simple, intuitive API for running commands on both Windows and Linux environments, with support for synchronous and asynchronous execution.</Description>
-		<PackageProjectUrl>https://github.com/ArsalanImamverdi/Commandy</PackageProjectUrl>
-		<PackageReadmeFile>readme.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/ArsalanImamverdi/Commandy</RepositoryUrl>
-		<PackageIcon>icon.png</PackageIcon>
-		<PackageIconUrl>file://icon.png</PackageIconUrl>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<None Include="..\..\readme.md">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="..\..\icon.png">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Compile Include="..\Shared\ProcessHelper\*.cs" Link="Internals\ProcessHelper\%(Filename)%(Extension)" />
-		<Compile Include="..\Shared\ShellHelper\*.cs" Link="Internals\ShellHelper\%(Filename)%(Extension)" />
+		<Compile Include="..\Shared\ProcessHelper\*.cs"
+			Link="Internals\ProcessHelper\%(Filename)%(Extension)" />
+		<Compile Include="..\Shared\ShellHelper\*.cs"
+			Link="Internals\ShellHelper\%(Filename)%(Extension)" />
 		<Compile Include="..\Shared\Command\*.cs" Link="Internals\Command\%(Filename)%(Extension)" />
 		<Compile Include="..\Shared\*.cs" Link="Internals\%(Filename)%(Extension)" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<Compile Remove="..\Shared\CommandResult.cs" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(Configuration)' == 'Release'">
+		<PackageReference Include="Commandy.Abstractions" Version="$(Version)" />
+	</ItemGroup>
+	<ItemGroup Condition=" '$(Configuration)' == 'Debug'">
 		<ProjectReference Include="..\Commandy.Abstractions\Commandy.Abstractions.csproj" />
 	</ItemGroup>
 </Project>
