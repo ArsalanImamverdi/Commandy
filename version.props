@@ -1,6 +1,7 @@
 <Project>
     <PropertyGroup>
         <Title>$(AssemblyName)</Title>
+        <Version>1.0.1</Version>
 		<Authors>MohamadArsalan Imamverdi</Authors>
 		<PackageId>$(AssemblyName)</PackageId>
         <Description>A powerful, cross-platform .NET library for executing shell commands and
