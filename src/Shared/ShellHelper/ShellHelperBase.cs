@@ -9,25 +9,21 @@ namespace Commandy.Internals.ShellHelper
     {
         public static string GetWindowsArguments(IReadOnlyCollection<ICommandArgument> commandArguments)
         {
-            return BuildArguments(commandArguments, Constants.CMD_FLAG, false);
+            return BuildArguments(commandArguments);
         }
 
         public static string GetUnixArguments(IReadOnlyCollection<ICommandArgument> commandArguments)
         {
-            return BuildArguments(commandArguments, Constants.SHELL_FLAG, true);
+            return BuildArguments(commandArguments);
         }
 
-        private static string BuildArguments(IReadOnlyCollection<ICommandArgument> commandArguments, string flag, bool isUnix)
+        private static string BuildArguments(IReadOnlyCollection<ICommandArgument> commandArguments)
         {
             var stringBuilder = new StringBuilder();
             stringBuilder.Append(Internals.Constants.WHITE_SPACE);
 
             foreach (ICommandArgument argument in commandArguments)
             {
-                if (ShouldAddFlag(argument, isUnix))
-                {
-                    stringBuilder.Append(flag);
-                }
 
                 stringBuilder.Append(argument.Argument);
 
@@ -41,22 +37,6 @@ namespace Commandy.Internals.ShellHelper
             }
 
             return stringBuilder.ToString();
-        }
-
-        private static bool ShouldAddFlag(ICommandArgument argument, bool isUnix)
-        {
-            if (isUnix)
-            {
-                return !argument.Argument.StartsWith(Constants.SHELL_FLAG)
-                       && !argument.Argument.StartsWith(Constants.CMD_FLAG)
-                       && !string.IsNullOrEmpty(argument.Value)
-                       && (argument.Argument.Length == 1 || argument.Argument.Length > 1);
-            }
-            else
-            {
-                return !argument.Argument.StartsWith(Constants.CMD_FLAG)
-                       && !string.IsNullOrEmpty(argument.Value);
-            }
         }
     }
 }
