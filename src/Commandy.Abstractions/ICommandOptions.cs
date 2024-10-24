@@ -66,11 +66,6 @@ namespace Commandy.Abstractions
 
         /// <summary>
         /// Adds a command-line argument without a value.
-        /// <para>
-        /// If the argument is a single character and a prefix (<c>-</c> or <c>/</c>) is not provided, 
-        /// it will be prefixed with a single dash (<c>-</c>). If the argument has more than one character, 
-        /// it will be prefixed with a double dash (<c>--</c>). If no prefix is specified, the default behavior will apply.
-        /// </para>
         /// </summary>
         /// <param name="argument">The argument to add.</param>
         /// <returns>The current builder instance.</returns>
@@ -78,11 +73,6 @@ namespace Commandy.Abstractions
 
         /// <summary>
         /// Adds a command-line argument with a value.
-        /// <para>
-        /// If the argument is a single character and a prefix (<c>-</c> or <c>/</c>) is not provided, 
-        /// it will be prefixed with a single dash (<c>-</c>). If the argument has more than one character, 
-        /// it will be prefixed with a double dash (<c>--</c>). If no prefix is specified, the default behavior will apply.
-        /// </para>
         /// </summary>
         /// <param name="argument">The argument to add.</param>
         /// <param name="value">The value of the argument.</param>
