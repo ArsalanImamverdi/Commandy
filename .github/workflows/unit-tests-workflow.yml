@@ -1,0 +1,53 @@
+name: Tests
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+      - release/**
+
+jobs:
+  test-prerequisite:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run_test: ${{ steps.check-branches.outputs.should_run_test }}
+    steps:
+      - name: CheckBranches
+        id: check-branches
+        run: |
+          if [[ ($GITHUB_BASE_REF == "main" && ! $GITHUB_HEAD_REF =~ release/*) ||
+               ($GITHUB_BASE_REF == "develop" && $GITHUB_HEAD_REF != "main" && ! $GITHUB_HEAD_REF =~ release/*) ||
+               ($GITHUB_BASE_REF =~ release/* && $GITHUB_HEAD_REF != "main" && $GITHUB_HEAD_REF != "develop") ]]; then
+             echo "should_run_test=true" >> $GITHUB_OUTPUT
+          else 
+             echo "should_run_test=false" >> $GITHUB_OUTPUT
+          fi
+  tests:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs: [test-prerequisite]
+    if: needs.test-prerequisite.outputs.should_run_test == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.0.x'
+      - name: Run tests
+        run: dotnet test tests/Commandy.Tests/Commandy.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura --logger:"junit;LogFilePath=test-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
+
+      - name: Archive code coverage results
+        uses: 5monkeys/cobertura-action@master
+        with:
+          path: tests/Commandy.Tests/coverage.cobertura.xml
+          name: code-coverage-report
+          minimum_coverage: 45
+
+      - name: Archive test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          name: test-report
+          path: tests/Commandy.Tests/test-result.xml
