@@ -1,0 +1,18 @@
+name: CI/CD
+
+on:
+  push:
+    tags:
+      - '*.*.*'  # Match version tags like v1.2.3
+      - '*.*.*-preview.*'  # Match preview tags like v1.2.3-preview.1
+  pull_request:
+    branches:
+      - Develop
+      - Main
+      
+jobs:
+  environment-print:
+    runs-on: ubuntu-latest
+    steps:
+       - name: Print
+         run: env
