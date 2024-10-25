@@ -8,7 +8,7 @@ namespace Commandy.Internals.Command
     internal class CommandOptionsBuilder : ICommandOptionsBuilder
     {
         private readonly List<ICommandArgument> _commandArguments = new List<ICommandArgument>();
-        private readonly Dictionary<string, string> _environmentVariables = null;
+        private readonly Dictionary<string, string> _environmentVariables = new Dictionary<string, string>();
         private string _workingDirectory = null;
         private TimeSpan _timeout = TimeSpan.MaxValue;
         private ICommand _pipeTo = null;
