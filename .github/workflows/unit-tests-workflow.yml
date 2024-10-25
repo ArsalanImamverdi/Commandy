@@ -25,6 +25,7 @@ jobs:
           fi
   tests:
     runs-on: ubuntu-latest
+    permissions: write-all
     needs: [test-prerequisite]
     if: needs.test-prerequisite.outputs.should_run_test == 'true'
     steps:
