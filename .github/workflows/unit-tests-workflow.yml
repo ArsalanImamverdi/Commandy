@@ -42,10 +42,11 @@ jobs:
         uses: 5monkeys/cobertura-action@master
         with:
           path: tests/Commandy.Tests/coverage.cobertura.xml
-          name: code-coverage-report
+          report_name: code-coverage-report
+          minimum_coverage: 45
 
       - name: Archive test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          name: test-report
+          report_name: test-report
           path: tests/Commandy/test-result.xml
