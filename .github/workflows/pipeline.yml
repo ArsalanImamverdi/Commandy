@@ -19,12 +19,10 @@ jobs:
                 ($GITHUB_BASE_REF == "develop" && $GITHUB_HEAD_REF != "main" && ! $GITHUB_HEAD_REF =~ release/*) ||
                 ($GITHUB_BASE_REF =~ release/* && $GITHUB_HEAD_REF != "main" && $GITHUB_HEAD_REF != "develop") ]]; then
               echo yes
-              echo "should_run_test=true" >> $GITHUB_ENV
-              echo "::set-output name=should_run_test::true"
+              echo "should_run_test=true" >> $GITHUB_OUTPUT
            else 
               echo no
-              echo "should_run_test=false" >> $GITHUB_ENV
-              echo "::set-output name=should_run_test::false"
+              echo "should_run_test=false" >> $GITHUB_OUTPUT
            fi
   tests:
     runs-on: ubuntu-latest
