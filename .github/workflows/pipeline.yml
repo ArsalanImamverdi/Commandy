@@ -38,11 +38,15 @@ jobs:
       - name: Run tests
         run: dotnet test tests/Commandy.Tests/Commandy.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura --logger:"junit;LogFilePath=test-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose" --no-restore
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v2
+      - name: Archive code coverage results
+        uses: 5monkeys/cobertura-action@master
         with:
-          name: test-results
-          path: |
-            tests/Commandy.Tests/test-result.xml
-            tests/Commandy.Tests/coverage.cobertura.xml
+          path: tests/Commandy.Tests/coverage.cobertura.xml
+          name: code-coverage-report
+          
+      - name: Archive test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          name: test-report
+          path: tests/Commandy/test-result.xml
 
