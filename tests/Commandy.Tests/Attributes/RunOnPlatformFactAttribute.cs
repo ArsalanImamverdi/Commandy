@@ -9,7 +9,7 @@ namespace Commandy.Tests.Attributes
     }
     internal class PlatformAttributeBase : FactAttribute
     {
-        protected OSPlatform? GetOSPlatform(OSPlatforms oSPlatforms)
+        protected static OSPlatform? GetOSPlatform(OSPlatforms oSPlatforms)
         {
             var prop = typeof(OSPlatform).GetProperty(oSPlatforms.ToString(), System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
             if (prop is null)

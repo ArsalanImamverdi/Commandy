@@ -1,11 +1,10 @@
-using System.Collections.Generic;
 using System.Text;
 
 using Commandy.Abstractions;
 
 namespace Commandy.Internals.ShellHelper
 {
-    public class UnixShellHelper : IShellHelper
+    internal class UnixShellHelper : IShellHelper
     {
         public string GetArguments(ICommand command)
         {
