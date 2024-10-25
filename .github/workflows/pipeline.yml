@@ -10,18 +10,17 @@ on:
 jobs:
   test-prerequisite:
     runs-on: ubuntu-latest
+    outputs:
+      should_run_test: ${{ steps.check-branches.outputs.should_run_test }}
     steps:
        - name: CheckBranches
+         id: check-branches
          run: |
-           echo GITHUB_BASE_REF:$GITHUB_BASE_REF
-           echo GITHUB_HEAD_REF:$GITHUB_HEAD_REF
            if [[ ($GITHUB_BASE_REF == "main" && ! $GITHUB_HEAD_REF =~ release/*) ||
                 ($GITHUB_BASE_REF == "develop" && $GITHUB_HEAD_REF != "main" && ! $GITHUB_HEAD_REF =~ release/*) ||
                 ($GITHUB_BASE_REF =~ release/* && $GITHUB_HEAD_REF != "main" && $GITHUB_HEAD_REF != "develop") ]]; then
-              echo yes
               echo "should_run_test=true" >> $GITHUB_OUTPUT
            else 
-              echo no
               echo "should_run_test=false" >> $GITHUB_OUTPUT
            fi
   tests:
