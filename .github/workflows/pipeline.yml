@@ -7,8 +7,9 @@ on:
       - '*.*.*-preview.*'  # Match preview tags like v1.2.3-preview.1
   pull_request:
     branches:
-      - Develop
-      - Main
+      - develop
+      - main
+      - release/**
       
 jobs:
   environment-print:
