@@ -7,17 +7,7 @@ namespace Commandy.Internals.ShellHelper
 {
     internal class ShellHelperBase
     {
-        public static string GetWindowsArguments(IReadOnlyCollection<ICommandArgument> commandArguments)
-        {
-            return BuildArguments(commandArguments);
-        }
-
-        public static string GetUnixArguments(IReadOnlyCollection<ICommandArgument> commandArguments)
-        {
-            return BuildArguments(commandArguments);
-        }
-
-        private static string BuildArguments(IReadOnlyCollection<ICommandArgument> commandArguments)
+        public static string GetArguments(IReadOnlyCollection<ICommandArgument> commandArguments)
         {
             var stringBuilder = new StringBuilder();
             stringBuilder.Append(Internals.Constants.WHITE_SPACE);
@@ -35,7 +25,6 @@ namespace Commandy.Internals.ShellHelper
 
                 stringBuilder.Append(Internals.Constants.WHITE_SPACE);
             }
-
             return stringBuilder.ToString();
         }
     }

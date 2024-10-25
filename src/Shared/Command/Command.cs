@@ -41,18 +41,26 @@ namespace Commandy.Internals.Command
 
         public ICommandResult Execute(CancellationToken cancellationToken)
         {
-            OnDataReceived += (sender, e) =>
+            try
             {
-                _data.AppendLine(e.Data);
-            };
-            OnErrorReceived += (sender, e) =>
+                OnDataReceived += (sender, e) =>
+                {
+                    _data.AppendLine(e.Data);
+                };
+                OnErrorReceived += (sender, e) =>
+                {
+                    _error.AppendLine(e.Data);
+                };
+
+                var process = _processHelper.Create(this, OnDataReceived, OnErrorReceived, cancellationToken, null);
+
+                return new CommandResult(process.ExitCode, _data.ToString(), _error.ToString());
+            }
+            catch (System.Exception ex)
             {
-                _error.AppendLine(e.Data);
-            };
+                return new CommandResult(-1, string.Empty, ex.Message);
+            }
 
-            var process = _processHelper.Create(this, OnDataReceived, OnErrorReceived, cancellationToken, null);
-
-            return new CommandResult(process.ExitCode, _data.ToString(), _error.ToString());
         }
 
         public Task<ICommandResult> ExecuteAsync()
