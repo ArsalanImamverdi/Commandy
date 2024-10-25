@@ -49,4 +49,4 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           name: test-report
-          path: tests/Commandy/test-result.xml
+          path: tests/Commandy.Tests/test-result.xml
