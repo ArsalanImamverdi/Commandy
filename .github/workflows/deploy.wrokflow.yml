@@ -73,8 +73,8 @@ jobs:
           PACKAGE_NAME: Commandy.Abstractions
           PACKAGE_VERSION: ${{ github.ref_name }}
         run: |
-          for i in {1..10}; do
-            if dotnet nuget list source=https://api.nuget.org/v3/index.json | grep -q "$PACKAGE_NAME $PACKAGE_VERSION"; then
+          for i in {1..20}; do
+            if dotnet package search "$PACKAGE_NAME" --exact-match | grep "$PACKAGE_VERSION"; then
               echo "Package is available on NuGet!"
               exit 0
             fi
