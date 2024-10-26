@@ -10,6 +10,8 @@ inputs:
 
 runs:
   using: 'composite'
+  outputs:
+    should_run_test: ${{ steps.pack.outputs.package_path }}
   steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -25,7 +27,7 @@ runs:
         dotnet pack ${{ inputs.project_path }} -c Release --output pack
         PACKAGE_NAME=$(basename ${{ inputs.project_path }} .csproj)
         PACKAGE_PATH="pack/${PACKAGE_NAME}.${{ github.ref_name }}.nupkg"
-        echo "package_path=${PACKAGE_PATH}" >> $GITHUB_ENV
+        echo "package_path=${PACKAGE_PATH}" >> $GITHUB_OUTPUT
       shell: bash
       env:
         PACKAGE_VERSION: ${{ github.ref_name }}

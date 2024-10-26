@@ -93,9 +93,6 @@ jobs:
         with:
           project_path: src/Commandy/Commandy.csproj
       - name: Push Commandy
-        env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-          NUGET_SOURCE: ${{ secrets.NUGET_SOURCE }}
         uses: ./.github/workflows/actions/nuget-push
         with:
           package_path: 'pack/${{ steps.pack-commandy.outputs.package_path }}'
