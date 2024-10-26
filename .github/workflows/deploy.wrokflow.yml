@@ -58,7 +58,7 @@ jobs:
           NUGET_SOURCE: ${{ secrets.NUGET_SOURCE }}
         uses: ./.github/workflows/actions/nuget-push
         with:
-          package_path: 'pack/${{ steps.pack-commandy-abstraction.outputs.package_path }}'
+          package_path: 'pack/Commandy.Abstractions.${{ github.ref_name }}.nupkg'
 
   wait-for-commandy-abstraction-package:
     needs: [deploy-commandy-abstraction]
@@ -101,7 +101,7 @@ jobs:
           NUGET_SOURCE: ${{ secrets.NUGET_SOURCE }}
         uses: ./.github/workflows/actions/nuget-push
         with:
-          package_path: 'pack/${{ steps.pack-commandy.outputs.package_path }}'
+          package_path: 'pack/Commandy.${{ github.ref_name }}.nupkg'
 
   deploy-commandy-dependency-injection:
     needs: [wait-for-commandy-abstraction-package]
@@ -120,4 +120,4 @@ jobs:
           NUGET_SOURCE: ${{ secrets.NUGET_SOURCE }}
         uses: ./.github/workflows/actions/nuget-push
         with:
-          package_path: 'pack/${{ steps.pack-commandy-dependency-injection.outputs.package_path }}'
+          package_path: 'pack/Commandy.DependencyInjection.${{ github.ref_name }}.nupkg'

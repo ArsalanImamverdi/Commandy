@@ -24,5 +24,6 @@ runs:
 
     - name: Push package to NuGet
       run: |
+        echo PP:"${{ inputs.package_path }}"
         dotnet nuget push "${{ inputs.package_path }}" --api-key "${{ env.NUGET_API_KEY }}" --source "${{ env.NUGET_SOURCE }}"
       shell: bash
