@@ -48,7 +48,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: run ls Commandy.Abstraction
-        run: ls
+        run: |
+          ls -a
+          ls ./.github/workflows/actions/
       - name: Pack Commandy.Abstraction
         id: pack-commandy-abstraction
         uses: ./.github/workflows/actions/dotnet-nuget-pack.workflow.yml
