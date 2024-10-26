@@ -1,5 +1,6 @@
 ﻿using Commandy.Abstractions;
 using Commandy.DependencyInjection;
+using Commandy.Tests.Attributes;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -7,7 +8,7 @@ namespace Commandy.Tests
 {
     public class WindowsCommandTests
     {
-        [Fact]
+        [RunOnPlatformFact(OSPlatforms.Windows)]
         public async Task RunCommand_WithShell_WhenSuccess_ShouldExitCodeBeZero()
         {
             var command = CommandProvider.CreateCommand("dir", opt => opt.UseShell());
@@ -20,7 +21,7 @@ namespace Commandy.Tests
             Assert.Equal(0, result.ExitCode);
         }
 
-        [Fact]
+        [RunOnPlatformFact(OSPlatforms.Windows)]
         public void RunCommand_WithoutShell_NoneAsync_WhenSuccess_ShouldExitCodeBeZero()
         {
             var command = CommandProvider.CreateCommand("git", opt => opt.UseShell(false).AddArgument("--version"));
@@ -33,7 +34,7 @@ namespace Commandy.Tests
             Assert.Equal(0, result.ExitCode);
         }
 
-        [Fact]
+        [RunOnPlatformFact(OSPlatforms.Windows)]
         public void RunCommand_WithShell_WhenCancel_ShouldExitCodeBeLessThanZeroAndContainsContentBeforeExit()
         {
             var command = CommandProvider.CreateCommand("echo.bat");
@@ -48,7 +49,7 @@ namespace Commandy.Tests
             Assert.DoesNotContain("Third", result.Output);
         }
 
-        [Fact]
+        [RunOnPlatformFact(OSPlatforms.Windows)]
         public void RunCommand_WithShell_WhenHasError_ShouldExitCodeBeGreaterThanZeroAndHasErrorAndNoOutput()
         {
             var command = CommandProvider.CreateCommand("something-cause-error", opt => opt.UseShell());
@@ -59,7 +60,7 @@ namespace Commandy.Tests
             Assert.NotEmpty(result.Error);
         }
 
-        [Fact]
+        [RunOnPlatformFact(OSPlatforms.Windows)]
         public void RunCommand_WithShell_WhenPiped_ShouldExitCodeBeZero()
         {
             var pipeCommand = CommandProvider.CreateCommand("findstr", opt => opt.UseShell().AddArgument("Serial"));
@@ -70,7 +71,7 @@ namespace Commandy.Tests
             Assert.Contains("Serial", result.Output);
         }
 
-        [Fact]
+        [RunOnPlatformFact(OSPlatforms.Windows)]
         public async Task RunCommand_WithShell_UseDependencyInjection_WhenSuccess_ShouldExitCodeBeZero()
         {
             var serviceCollection = new ServiceCollection();

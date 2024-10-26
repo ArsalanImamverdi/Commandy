@@ -6,7 +6,9 @@ namespace Commandy.Internals.ShellHelper
 {
     internal interface IShellHelper
     {
-        string GetArguments(IReadOnlyCollection<ICommandArgument> commandArguments);
+        string GetArguments(ICommand command);
+
+        string GetExecutable(ICommand command);
         string GetShell();
 
         string GetShellArgument();

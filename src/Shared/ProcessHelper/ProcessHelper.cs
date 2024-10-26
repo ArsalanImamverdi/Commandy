@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading;
 
 using Commandy.Abstractions;
@@ -18,8 +20,8 @@ namespace Commandy.Internals.ProcessHelper
         }
         public Process Create(ICommand command, DataReceivedEventHandler onDataReceived, DataReceivedEventHandler onErrorReceived, CancellationToken cancellationToken, StreamReader streamReader)
         {
-            var executable = command.Options.UseShell ? _shellHelper.GetShell() : command.CommandText;
-            var arguments = (command.Options.UseShell ? _shellHelper.GetShellArgument() + Constants.WHITE_SPACE + command.CommandText : string.Empty) + _shellHelper.GetArguments(command.Options.Arguments);
+            var executable = _shellHelper.GetExecutable(command);
+            var arguments = _shellHelper.GetArguments(command);
             var startInfo = new ProcessStartInfo()
             {
                 FileName = executable,
@@ -36,10 +38,15 @@ namespace Commandy.Internals.ProcessHelper
             if (command.Options.EnvironmentVariables != null && command.Options.EnvironmentVariables.Count > 0)
             {
                 foreach (KeyValuePair<string, string> variable in command.Options.EnvironmentVariables)
+                {
                     startInfo.EnvironmentVariables.Add(variable.Key, variable.Value);
+                    startInfo.Environment.Add(variable.Key, variable.Value);
+                }
             }
             if (!string.IsNullOrEmpty(command.Options.WorkingDirectory))
                 startInfo.WorkingDirectory = command.Options.WorkingDirectory;
+            else
+                startInfo.WorkingDirectory = Directory.GetCurrentDirectory();
 
             var process = new Process() { StartInfo = startInfo };
 
