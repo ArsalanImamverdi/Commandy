@@ -50,11 +50,11 @@ jobs:
 
       - name: Pack Commandy.Abstraction
         id: pack-commandy-abstraction
-        uses: .github/workflows/actions/dotnet-nuget-pack.workflow.yml
+        uses: ./.github/workflows/actions/dotnet-nuget-pack.workflow.yml
         with:
           project_path: src/Commandy.Abstraction/Commandy.Abstraction.csproj
       - name: Push Commandy.Abstraction
-        uses: .github/workflows/actions/dotnet-nuget-push.workflow.yml
+        uses: ./.github/workflows/actions/dotnet-nuget-push.workflow.yml
         with:
           package_path: 'pack/${{ steps.pack-commandy-abstraction.outputs.package_path }}'
 
