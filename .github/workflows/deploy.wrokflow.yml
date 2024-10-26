@@ -115,6 +115,9 @@ jobs:
         with:
           project_path: src/Commandy.DependencyInjection/Commandy.DependencyInjection.csproj
       - name: Push Commandy.DependencyInjection
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+          NUGET_SOURCE: ${{ secrets.NUGET_SOURCE }}
         uses: ./.github/workflows/actions/nuget-push
         with:
           package_path: 'pack/${{ steps.pack-commandy-dependency-injection.outputs.package_path }}'
