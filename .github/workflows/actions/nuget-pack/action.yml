@@ -1,0 +1,39 @@
+name: Pack NuGet
+
+description: 'A GitHub Action to pack a .NET project into a NuGet package.'
+
+inputs:
+  project_path:
+    required: true
+    description: 'Path to the .NET project file.'
+    type: string
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '2.1.x'
+
+    - name: Pack project
+      id: pack
+      run: |
+        dotnet pack ${{ inputs.project_path }} -c Release --output pack
+        PACKAGE_NAME=$(basename ${{ inputs.project_path }} .csproj)
+        PACKAGE_PATH="pack/${PACKAGE_NAME}.${{ github.ref_name }}.nupkg"
+        echo "package_path=${PACKAGE_PATH}" >> $GITHUB_OUTPUT
+      shell: bash
+      env:
+        PACKAGE_VERSION: ${{ github.ref_name }}
+
+    - name: Upload pack artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-packages
+        path: pack/*.nupkg
+        retention-days: 5
+        overwrite: true
