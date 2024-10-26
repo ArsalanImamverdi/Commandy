@@ -47,12 +47,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Pack Commandy.Abstraction
+      - name: Pack Commandy.Abstractions
         id: pack-commandy-abstraction
         uses: ./.github/workflows/actions/nuget-pack
         with:
-          project_path: src/Commandy.Abstraction/Commandy.Abstraction.csproj
-      - name: Push Commandy.Abstraction
+          project_path: src/Commandy.Abstractions/Commandy.Abstractions.csproj
+      - name: Push Commandy.Abstractions
         uses: ./.github/workflows/actions/nuget-push
         with:
           package_path: 'pack/${{ steps.pack-commandy-abstraction.outputs.package_path }}'
@@ -65,9 +65,9 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '2.1.x'
-      - name: Wait for Commandy.Abstraction to be available
+      - name: Wait for Commandy.Abstractions to be available
         env:
-          PACKAGE_NAME: Commandy.Abstraction
+          PACKAGE_NAME: Commandy.Abstractions
           PACKAGE_VERSION: ${{ github.ref_name }}
         run: |
           for i in {1..10}; do
