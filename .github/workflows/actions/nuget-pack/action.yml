@@ -33,6 +33,6 @@ runs:
     - name: Upload pack artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: pack/*.nupkg
-        path: pack
+        name: nuget-packages
+        path: pack/*.nupkg
         retention-days: 5
