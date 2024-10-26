@@ -1,0 +1,26 @@
+name: Push to NuGet
+
+on:
+  workflow_call:
+    inputs:
+      package_path:
+        required: true
+        type: string
+    secrets:
+      NUGET_API_KEY:
+        required: true
+      NUGET_SOURCE:
+        required: true
+
+jobs:
+  push-nuget:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '2.1.x'
+
+      - name: Push package to NuGet
+        run: |
+          dotnet nuget push "${{ inputs.package_path }}" --api-key "${{ secrets.NUGET_API_KEY }}" --source "${{ secrets.NUGET_SOURCE }}"

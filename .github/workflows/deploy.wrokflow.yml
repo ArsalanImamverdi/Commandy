@@ -1,0 +1,108 @@
+name: DeployPackages
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+      - '*.*.*-preview'
+
+jobs:
+  deploy-prerequisite:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Fetch all branches
+        run: git fetch --all
+
+      - name: Verify tag format and branch
+        env:
+          CI_COMMIT_TAG: ${{ github.ref_name }}
+        run: |
+          branches=$(git show --no-patch --format=%D $CI_COMMIT_TAG)
+          echo "Branches: $branches"
+          echo "Tag: $CI_COMMIT_TAG"
+          if [[ $branches == *release* && $CI_COMMIT_TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+-preview\.[0-9]+$ ]]; then
+            echo "Matched Release preview tag pattern"
+            exit 0
+          elif [[ $branches == *main* && $CI_COMMIT_TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Matched Main tag pattern"
+            exit 0
+          else
+            echo "Created tag does not meet requirements."
+            exit 1
+          fi
+      - name: Check for version match in version.props
+        env:
+          CI_COMMIT_TAG: ${{ github.ref_name }}
+        run: |
+          if ! grep -q "$CI_COMMIT_TAG" version.props; then
+            echo "Version mismatch: $CI_COMMIT_TAG not found in version.props"
+            exit 1
+          fi
+  deploy-commandy-abstraction:
+    needs: [deploy-prerequisite]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pack Commandy.Abstraction
+        id: pack-commandy-abstraction
+        uses: ./.github/workflows/actions/dotnet-nuget-pack.workflow.yml
+        with:
+          project_path: src/Commandy.Abstraction/Commandy.Abstraction.csproj
+      - name: Push Commandy.Abstraction
+        uses: ./.github/workflows/actions/dotnet-nuget-push.workflow.yml
+        with:
+          package_path: 'pack/${{ steps.pack-commandy-abstraction.outputs.package_path }}'
+
+  wait-for-commandy-abstraction-package:
+    needs: [deploy-commandy-abstraction]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '2.1.x'
+      - name: Wait for Commandy.Abstraction to be available
+        env:
+          PACKAGE_NAME: Commandy.Abstraction
+          PACKAGE_VERSION: ${{ github.ref_name }}
+        run: |
+          for i in {1..10}; do
+            if dotnet nuget list source=https://api.nuget.org/v3/index.json | grep -q "$PACKAGE_NAME $PACKAGE_VERSION"; then
+              echo "Package is available on NuGet!"
+              exit 0
+            fi
+            echo "Waiting for package to be available on NuGet..."
+            sleep 30
+          done
+          echo "Package did not become available in time." >&2
+          exit 1
+
+  deploy-commandy:
+    needs: [wait-for-commandy-abstraction-package]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pack Commandy
+        id: pack-commandy
+        uses: ./.github/workflows/actions/dotnet-nuget-pack.workflow.yml
+        with:
+          project_path: src/Commandy/Commandy.csproj
+      - name: Push Commandy
+        uses: ./.github/workflows/actions/dotnet-nuget-push.workflow.yml
+        with:
+          package_path: 'pack/${{ steps.pack-commandy.outputs.package_path }}'
+
+  deploy-commandy-dependency-injection:
+    needs: [wait-for-commandy-abstraction-package]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pack Commandy.DependencyInjection
+        id: pack-commandy-dependency-injection
+        uses: ./.github/workflows/actions/dotnet-nuget-pack.workflow.yml
+        with:
+          project_path: src/Commandy.DependencyInjection/Commandy.DependencyInjection.csproj
+      - name: Push Commandy.DependencyInjection
+        uses: ./.github/workflows/actions/dotnet-nuget-push.workflow.yml
+        with:
+          package_path: 'pack/${{ steps.pack-commandy-dependency-injection.outputs.package_path }}'
