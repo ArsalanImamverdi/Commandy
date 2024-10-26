@@ -1,29 +1,33 @@
 name: Push to NuGet
 
-on:
-  workflow_call:
-    inputs:
-      package_path:
-        required: true
-        type: string
-    secrets:
-      NUGET_API_KEY:
-        required: true
-      NUGET_SOURCE:
-        required: true
+description: 'A GitHub Action to push a NuGet package to a NuGet repository.'
 
-jobs:
-  push-nuget:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '2.1.x'
-      - name: Download Package
-        uses: actions/download-artifact@v4
-        with: 
-            path: pack
-      - name: Push package to NuGet
-        run: |
-          dotnet nuget push "${{ inputs.package_path }}" --api-key "${{ secrets.NUGET_API_KEY }}" --source "${{ secrets.NUGET_SOURCE }}"
+inputs:
+  package_path:
+    required: true
+    description: 'Path to the NuGet package to push.'
+    type: string
+
+secrets:
+  NUGET_API_KEY:
+    required: true
+  NUGET_SOURCE:
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '2.1.x'
+
+    - name: Download Package
+      uses: actions/download-artifact@v4
+      with:
+        name: pack
+        path: ./pack # Make sure to specify the path where the artifact should be downloaded
+
+    - name: Push package to NuGet
+      run: |
+        dotnet nuget push "${{ inputs.package_path }}" --api-key "${{ secrets.NUGET_API_KEY }}" --source "${{ secrets.NUGET_SOURCE }}"
