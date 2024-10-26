@@ -26,6 +26,7 @@ runs:
         PACKAGE_NAME=$(basename ${{ inputs.project_path }} .csproj)
         PACKAGE_PATH="pack/${PACKAGE_NAME}.${{ github.ref_name }}.nupkg"
         echo "package_path=${PACKAGE_PATH}" >> $GITHUB_ENV
+      shell: bash
       env:
         PACKAGE_VERSION: ${{ github.ref_name }}
 

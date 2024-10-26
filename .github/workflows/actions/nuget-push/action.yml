@@ -15,7 +15,7 @@ secrets:
     required: true
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Set up .NET
       uses: actions/setup-dotnet@v3
@@ -26,8 +26,9 @@ runs:
       uses: actions/download-artifact@v4
       with:
         name: pack
-        path: ./pack # Make sure to specify the path where the artifact should be downloaded
+        path: ./pack  # Ensure the path is correct
 
     - name: Push package to NuGet
       run: |
         dotnet nuget push "${{ inputs.package_path }}" --api-key "${{ secrets.NUGET_API_KEY }}" --source "${{ secrets.NUGET_SOURCE }}"
+      shell: bash  # Specify the shell to use
