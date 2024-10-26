@@ -47,17 +47,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: run ls Commandy.Abstraction
-        run: |
-          ls -a
-          ls ./.github/workflows/actions/
       - name: Pack Commandy.Abstraction
         id: pack-commandy-abstraction
-        uses: ./.github/workflows/actions/dotnet-nuget-pack.workflow.yml
+        uses: ./.github/workflows/actions/nuget-pack
         with:
           project_path: src/Commandy.Abstraction/Commandy.Abstraction.csproj
       - name: Push Commandy.Abstraction
-        uses: ./.github/workflows/actions/dotnet-nuget-push.workflow.yml
+        uses: ./.github/workflows/actions/nuget-push
         with:
           package_path: 'pack/${{ steps.pack-commandy-abstraction.outputs.package_path }}'
 
@@ -93,11 +89,11 @@ jobs:
         uses: actions/checkout@v2
       - name: Pack Commandy
         id: pack-commandy
-        uses: ./.github/workflows/actions/dotnet-nuget-pack.workflow.yml
+        uses: ./.github/workflows/actions/nuget-pack
         with:
           project_path: src/Commandy/Commandy.csproj
       - name: Push Commandy
-        uses: ./.github/workflows/actions/dotnet-nuget-push.workflow.yml
+        uses: ./.github/workflows/actions/nuget-push
         with:
           package_path: 'pack/${{ steps.pack-commandy.outputs.package_path }}'
 
@@ -109,10 +105,10 @@ jobs:
         uses: actions/checkout@v2
       - name: Pack Commandy.DependencyInjection
         id: pack-commandy-dependency-injection
-        uses: ./.github/workflows/actions/dotnet-nuget-pack.workflow.yml
+        uses: ./.github/workflows/actions/nuget-pack
         with:
           project_path: src/Commandy.DependencyInjection/Commandy.DependencyInjection.csproj
       - name: Push Commandy.DependencyInjection
-        uses: ./.github/workflows/actions/dotnet-nuget-push.workflow.yml
+        uses: ./.github/workflows/actions/nuget-push
         with:
           package_path: 'pack/${{ steps.pack-commandy-dependency-injection.outputs.package_path }}'
