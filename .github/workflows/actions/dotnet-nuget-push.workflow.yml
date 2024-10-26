@@ -20,7 +20,10 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '2.1.x'
-
+      - name: Download Package
+        uses: actions/download-artifact@v4
+        with: 
+            path: pack
       - name: Push package to NuGet
         run: |
           dotnet nuget push "${{ inputs.package_path }}" --api-key "${{ secrets.NUGET_API_KEY }}" --source "${{ secrets.NUGET_SOURCE }}"
