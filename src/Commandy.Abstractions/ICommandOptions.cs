@@ -26,10 +26,9 @@ namespace Commandy.Abstractions
         IReadOnlyCollection<ICommandArgument> Arguments { get; }
 
         /// <summary>
-        /// Gets the command to pipe the output to, if any.
-        /// When set, the output of the current command is passed to the specified command.
+        /// The list of commands which are chained to current command
         /// </summary>
-        ICommand PipeTo { get; }
+        IReadOnlyList<IChainedCommand> ChainedCommands { get; }
 
         /// <summary>
         /// Gets the timeout for the command.
@@ -85,6 +84,17 @@ namespace Commandy.Abstractions
         /// <param name="command">The command to pipe the output to.</param>
         /// <returns>The current builder instance.</returns>
         ICommandOptionsBuilder PipeTo(ICommand command);
+
+        /// <summary>
+        /// Chains the current command to another command.
+        /// </summary>
+        /// <param name="command">The command to chain to.</param>
+        /// <param name="commandChainType">The type of chaining to be applied.</param>
+        /// <returns>The current builder instance.</returns>
+        /// <remarks>
+        /// If multiple commands are added to the chain, they will be executed in the order they were added.
+        /// </remarks>
+        ICommandOptionsBuilder ChainTo(ICommand command, CommandChainType commandChainType);
 
         /// <summary>
         /// Sets the timeout for the command.
