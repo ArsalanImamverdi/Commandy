@@ -1,19 +1,14 @@
-﻿using System.Diagnostics;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 using Commandy.Abstractions;
-using Commandy.Internals.ProcessHelper;
+using Commandy.Internals.ShellHelper;
 
 namespace Commandy.Internals.Command
 {
     internal class Command : ICommand
     {
-        private readonly IProcessHelper _processHelper;
-
-        private readonly StringBuilder _data;
-        private readonly StringBuilder _error;
+        private readonly IShellHelper _shellHelper;
         public event DataReceivedEventHandler OnDataReceived;
         public event DataReceivedEventHandler OnErrorReceived;
 
@@ -21,17 +16,11 @@ namespace Commandy.Internals.Command
 
         public ICommandOptions Options { get; private set; }
 
-        internal Command(IProcessHelper processHelper)
-        {
-            _processHelper = processHelper;
-            _data = new StringBuilder();
-            _error = new StringBuilder();
-        }
-
-        internal void Initialize(string commandText, ICommandOptions options)
+        internal Command(string commandText, ICommandOptions commandOptions, IShellHelper shellHelper)
         {
             CommandText = commandText;
-            Options = options;
+            Options = commandOptions;
+            _shellHelper = shellHelper;
         }
 
         public ICommandResult Execute()
@@ -41,26 +30,22 @@ namespace Commandy.Internals.Command
 
         public ICommandResult Execute(CancellationToken cancellationToken)
         {
+            var commandRunner = CommandRunnerFactory.GetCommandRunner(this, _shellHelper);
             try
             {
-                OnDataReceived += (sender, e) =>
-                {
-                    _data.AppendLine(e.Data);
-                };
-                OnErrorReceived += (sender, e) =>
-                {
-                    _error.AppendLine(e.Data);
-                };
-
-                var process = _processHelper.Create(this, OnDataReceived, OnErrorReceived, cancellationToken, null);
-
-                return new CommandResult(process.ExitCode, _data.ToString(), _error.ToString());
+                if (OnDataReceived != null)
+                    commandRunner.CommandProcess.DataReceived += (s, d) => OnDataReceived?.Invoke(s, d);
+                if (OnErrorReceived != null)
+                    commandRunner.CommandProcess.ErrorReceived += (s, d) => OnErrorReceived?.Invoke(s, d);
+                return commandRunner.Run(cancellationToken);
             }
-            catch (System.Exception ex)
+            finally
             {
-                return new CommandResult(-1, string.Empty, ex.Message);
+                if (OnDataReceived != null)
+                    commandRunner.CommandProcess.DataReceived -= (s, d) => OnDataReceived?.Invoke(s, d);
+                if (OnErrorReceived != null)
+                    commandRunner.CommandProcess.ErrorReceived -= (s, d) => OnErrorReceived?.Invoke(s, d);
             }
-
         }
 
         public Task<ICommandResult> ExecuteAsync()
@@ -70,7 +55,23 @@ namespace Commandy.Internals.Command
 
         public Task<ICommandResult> ExecuteAsync(CancellationToken cancellationToken)
         {
-            return Task.Run(() => Execute(cancellationToken));
+            var commandRunner = CommandRunnerFactory.GetCommandRunner(this, _shellHelper);
+            try
+            {
+                if (OnDataReceived != null)
+                    commandRunner.CommandProcess.DataReceived += (s, d) => OnDataReceived?.Invoke(s, d);
+                if (OnErrorReceived != null)
+                    commandRunner.CommandProcess.ErrorReceived += (s, d) => OnErrorReceived?.Invoke(s, d);
+                return commandRunner.RunAsync(cancellationToken);
+            }
+            finally
+            {
+                if (OnDataReceived != null)
+                    commandRunner.CommandProcess.DataReceived -= (s, d) => OnDataReceived?.Invoke(s, d);
+                if (OnErrorReceived != null)
+                    commandRunner.CommandProcess.ErrorReceived -= (s, d) => OnErrorReceived?.Invoke(s, d);
+            }
+
         }
     }
 }

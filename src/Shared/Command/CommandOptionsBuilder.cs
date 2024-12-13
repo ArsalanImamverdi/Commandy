@@ -8,12 +8,12 @@ namespace Commandy.Internals.Command
     internal class CommandOptionsBuilder : ICommandOptionsBuilder
     {
         private readonly List<ICommandArgument> _commandArguments = new List<ICommandArgument>();
+        private readonly List<IChainedCommand> _chainedCommands = new List<IChainedCommand>();
         private readonly Dictionary<string, string> _environmentVariables = new Dictionary<string, string>();
         private string _workingDirectory = null;
         private TimeSpan _timeout = TimeSpan.MaxValue;
-        private ICommand _pipeTo = null;
-        private bool _useShell = false;
-
+        private bool _useShell = true;
+        private int _priority = 0;
         public ICommandOptionsBuilder AddArgument(string argument)
         {
             _commandArguments.Add(new CommandArgument(argument));
@@ -34,9 +34,10 @@ namespace Commandy.Internals.Command
             return this;
         }
 
-        public ICommandOptions Build()
+        public ICommandOptionsBuilder ChainTo(ICommand command, CommandChainType commandChainType)
         {
-            return new CommandOptions(_useShell, _workingDirectory, _commandArguments, _pipeTo, _timeout, _environmentVariables);
+            _chainedCommands.Add(new ChainedCommand(command, commandChainType, _priority++));
+            return this;
         }
 
         public ICommandOptionsBuilder CloneFrom(ICommand command)
@@ -51,7 +52,7 @@ namespace Commandy.Internals.Command
 
         public ICommandOptionsBuilder PipeTo(ICommand command)
         {
-            _pipeTo = command;
+            _chainedCommands.Add(new ChainedCommand(command, CommandChainType.Pipe, _priority++));
             return this;
         }
 
@@ -71,6 +72,10 @@ namespace Commandy.Internals.Command
         {
             _workingDirectory = workingDirectory;
             return this;
+        }
+        public ICommandOptions Build()
+        {
+            return new CommandOptions(_useShell, _workingDirectory, _commandArguments, _timeout, _environmentVariables, _chainedCommands);
         }
     }
 }

@@ -2,7 +2,6 @@
 
 using Commandy.Abstractions;
 using Commandy.Internals.Command;
-using Commandy.Internals.ProcessHelper;
 using Commandy.Internals.ShellHelper;
 
 namespace Commandy
@@ -16,8 +15,7 @@ namespace Commandy
 
         public static ICommand CreateCommand(string commandText, Func<ICommandOptionsBuilder, ICommandOptionsBuilder> options)
         {
-            var command = new Command(new ProcessHelper(ShellHelperFactory.GetShellHelper()));
-            command.Initialize(commandText, options(new CommandOptionsBuilder()).Build());
+            var command = new Command(commandText, options(new CommandOptionsBuilder()).Build(), ShellHelperFactory.GetShellHelper());
             return command;
         }
     }
