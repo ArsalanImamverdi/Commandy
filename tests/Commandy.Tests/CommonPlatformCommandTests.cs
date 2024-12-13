@@ -17,10 +17,10 @@
         public void RunCommand_WithoutShell_NoneAsync_WhenSuccess_ShouldExitCodeBeZero()
         {
             var command = CommandProvider.CreateCommand("git", opt => opt.UseShell(false).AddArgument("--version"));
-            command.OnDataReceived += (sender, args) =>
-            {
-                Console.WriteLine(args.Data);
-            };
+            //command.OnDataReceived += (sender, args) =>
+            //{
+            //    Console.WriteLine(args.Data);
+            //};
             var result = command.Execute();
 
             Assert.Equal(0, result.ExitCode);

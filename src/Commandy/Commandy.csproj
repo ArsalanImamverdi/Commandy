@@ -6,17 +6,11 @@
 
 
 	<ItemGroup>
-		<Compile Include="..\Shared\ProcessHelper\*.cs"
-			Link="Internals\ProcessHelper\%(Filename)%(Extension)" />
-		<Compile Include="..\Shared\ShellHelper\*.cs"
-			Link="Internals\ShellHelper\%(Filename)%(Extension)" />
+		<Compile Include="..\Shared\ShellHelper\*.cs" Link="Internals\ShellHelper\%(Filename)%(Extension)" />
 		<Compile Include="..\Shared\Command\*.cs" Link="Internals\Command\%(Filename)%(Extension)" />
 		<Compile Include="..\Shared\*.cs" Link="Internals\%(Filename)%(Extension)" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<Compile Remove="..\Shared\CommandResult.cs" />
-	</ItemGroup>
 
 	<ItemGroup Condition=" '$(Configuration)' == 'Release'">
 		<PackageReference Include="Commandy.Abstractions" Version="$(Version)" />
@@ -24,4 +18,8 @@
 	<ItemGroup Condition=" '$(Configuration)' == 'Debug'">
 		<ProjectReference Include="..\Commandy.Abstractions\Commandy.Abstractions.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Compile Remove="..\Shared\ProcessHelper\**" />
+	</ItemGroup>
+
 </Project>

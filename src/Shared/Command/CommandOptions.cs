@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+
 using Commandy.Abstractions;
 
 namespace Commandy.Internals.Command
@@ -10,16 +11,16 @@ namespace Commandy.Internals.Command
         internal CommandOptions(bool useShell,
                                 string workingDirectory,
                                 List<ICommandArgument> commandArguments,
-                                ICommand pipeTo,
                                 TimeSpan timeout,
-                                Dictionary<string, string> environmentVariables)
+                                Dictionary<string, string> environmentVariables,
+                                List<IChainedCommand> chainedCommands)
         {
             UseShell = useShell;
             WorkingDirectory = workingDirectory;
-            PipeTo = pipeTo;
             Timeout = timeout;
             EnvironmentVariables = environmentVariables;
             Arguments = new ReadOnlyCollection<ICommandArgument>(commandArguments);
+            ChainedCommands = chainedCommands;
         }
         public bool UseShell { get; }
 
@@ -27,10 +28,14 @@ namespace Commandy.Internals.Command
 
         public IReadOnlyCollection<ICommandArgument> Arguments { get; }
 
-        public ICommand PipeTo { get; }
+        public IChainedCommand PipeTo { get; }
 
         public TimeSpan Timeout { get; }
 
         public IReadOnlyDictionary<string, string> EnvironmentVariables { get; }
+
+        public IReadOnlyList<IChainedCommand> ChainedCommands { get; }
+
+        public bool PreserveLog { get; }
     }
 }

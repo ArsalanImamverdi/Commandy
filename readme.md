@@ -12,6 +12,7 @@ Commandy is a powerful, cross-platform .NET library for executing shell commands
 - **Cancellation Support**: Cancel long-running commands using cancellation tokens.
 - **Extensible Design**: Easy to extend for custom requirements.
 - **Piping Support**: Chain commands together by piping output from one command to another.
+- **Chaining Support**: Combine multiple commands into a seamless workflow.
 - **Timeout Handling**: Set timeouts for command execution to prevent hanging processes.
 - **Environment Variable Management**: Easily set and manage environment variables for commands.
 - **Working Directory Configuration**: Specify the working directory for command execution.
@@ -35,7 +36,7 @@ Here's a simple example to get you started:
 using Commandy;
 
 // Create and execute a command
-var result = Command.CreateCommand("echo Hello, World!")
+var result = Command.CreateCommand("echo", opt=>opt.AddArgument("Hello, World!")
     .Execute();
 
 Console.WriteLine($"Output: {result.Output}");
@@ -73,11 +74,22 @@ command.OnErrorReceived += (sender, args) => Console.WriteLine($"Error: {args.Er
 await command.ExecuteAsync();
 ```
 
+### Command Chaining
+
+```csharp
+var chainedCommand = CommandProvider.CreateCommand("echo", opt=>opt.AddArgument("Has Error!");
+var command = CommandProvider.CreateCommand("errory-command", opt => opt
+    .ChainTo(chaindedCommand,CommandChainType.Or)
+);
+var result = command.Execute();
+```
+
 ### Command Piping
 
 ```csharp
-var grepCommand = CommandProvider.CreateCommand("grep error");
-var command = CommandProvider.CreateCommand("cat log.txt", opt => opt
+var grepCommand = CommandProvider.CreateCommand("grep", opt=>opt.AddArgument("error");
+var command = CommandProvider.CreateCommand("cat", opt => opt
+    .AddArgument("log.txt")
     .PipeTo(grepCommand)
 );
 var result = command.Execute();
@@ -100,7 +112,7 @@ public class MyService
 
     public void RunCommand()
     {
-        var command = _commandProvider.CreateCommand("echo Hello from DI!");
+        var command = _commandProvider.CreateCommand("echo", opt=>opt.AddArgument("Hello from DI!");
         var result = command.Execute();
         Console.WriteLine(result.Output);
     }

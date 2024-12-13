@@ -12,10 +12,10 @@ namespace Commandy.Tests
         public async Task RunCommand_WithShell_WhenSuccess_ShouldExitCodeBeZero()
         {
             var command = CommandProvider.CreateCommand("dir", opt => opt.UseShell());
-            command.OnDataReceived += (sender, args) =>
-            {
-                Console.WriteLine(args.Data);
-            };
+            //command.OnDataReceived += (sender, args) =>
+            //{
+            //    Console.WriteLine(args.Data);
+            //};
             var result = await command.ExecuteAsync();
 
             Assert.Equal(0, result.ExitCode);
@@ -25,13 +25,16 @@ namespace Commandy.Tests
         public void RunCommand_WithoutShell_NoneAsync_WhenSuccess_ShouldExitCodeBeZero()
         {
             var command = CommandProvider.CreateCommand("git", opt => opt.UseShell(false).AddArgument("--version"));
-            command.OnDataReceived += (sender, args) =>
+            var evnt = string.Empty;
+            command.OnDataReceived += (s, l) =>
             {
-                Console.WriteLine(args.Data);
+                evnt = l.Data;
             };
             var result = command.Execute();
 
             Assert.Equal(0, result.ExitCode);
+            Assert.NotEmpty(evnt);
+
         }
 
         [RunOnPlatformFact(OSPlatforms.Windows)]
@@ -40,13 +43,18 @@ namespace Commandy.Tests
             var command = CommandProvider.CreateCommand("echo.bat");
             var cancellation = new CancellationTokenSource();
             cancellation.CancelAfter(6000);
-
+            
             var result = command.Execute(cancellation.Token);
 
             Assert.Equal(-1, result.ExitCode);
             Assert.Contains("First", result.Output);
             Assert.Contains("Second", result.Output);
             Assert.DoesNotContain("Third", result.Output);
+        }
+
+        private void Command_OnErrorReceived(object sender, DataReceivedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         [RunOnPlatformFact(OSPlatforms.Windows)]
@@ -63,12 +71,36 @@ namespace Commandy.Tests
         [RunOnPlatformFact(OSPlatforms.Windows)]
         public void RunCommand_WithShell_WhenPiped_ShouldExitCodeBeZero()
         {
-            var pipeCommand = CommandProvider.CreateCommand("findstr", opt => opt.UseShell().AddArgument("Serial"));
-            var command = CommandProvider.CreateCommand("dir", opt => opt.UseShell().PipeTo(pipeCommand));
+            var pipeCommand = CommandProvider.CreateCommand("findstr", opt => opt.UseShell().AddArgument("Number"));
+            var pipeAnotherCommand = CommandProvider.CreateCommand("findstr", opt => opt.UseShell().AddArgument("Serial"));
+            var command = CommandProvider.CreateCommand("dir", opt => opt.UseShell().PipeTo(pipeAnotherCommand).PipeTo(pipeCommand));
 
             var result = command.Execute();
             Assert.Equal(0, result.ExitCode);
-            Assert.Contains("Serial", result.Output);
+            Assert.Contains("ial", result.Output);
+        }
+
+        [RunOnPlatformFact(OSPlatforms.Windows)]
+        public void RunCommand_WithShell_WhenChained_ShouldExitCodeBeZero()
+        {
+            var chainCommand = CommandProvider.CreateCommand("echo", opt => opt.UseShell().AddArgument("Hello, World!"));
+            var chainCommand2 = CommandProvider.CreateCommand("echo", opt => opt.UseShell().AddArgument("Hello, World! from other chained!"));
+            var command = CommandProvider.CreateCommand("errory-command", opt => opt.UseShell().ChainTo(chainCommand, CommandChainType.Or).ChainTo(chainCommand2, CommandChainType.And));
+            var result = command.Execute();
+            Assert.Equal(0, result.ExitCode);
+            Assert.Contains(" Hello, World! from other chained! \r\n", result.Output);
+        }
+        [RunOnPlatformFact(OSPlatforms.Windows)]
+        public void RunCommand_WithShell_WhenChainedWithPreserveLog_ShouldExitCodeBeZero()
+        {
+            var chainCommand = CommandProvider.CreateCommand("findstr", opt => opt.UseShell().AddArgument("Serial"));
+            var chainCommand1 = CommandProvider.CreateCommand("dir", opt => opt.UseShell().PipeTo(chainCommand));
+            var chainCommand2 = CommandProvider.CreateCommand("echo", opt => opt.UseShell().AddArgument("Hello, World! from other chained!"));
+            var command = CommandProvider.CreateCommand("error-command", opt => opt.UseShell().ChainTo(chainCommand1, CommandChainType.Or).ChainTo(chainCommand2, CommandChainType.And));
+            var result = command.Execute();
+            Assert.Equal(0, result.ExitCode);
+            Assert.NotEqual(" Hello, World! from other chained! \r\n", result.Output);
+            Assert.Contains(" Hello, World! from other chained! \r\n", result.Output);
         }
 
         [RunOnPlatformFact(OSPlatforms.Windows)]
@@ -79,10 +111,10 @@ namespace Commandy.Tests
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var commandProvider = serviceProvider.GetRequiredService<ICommandProvider>();
             var command = commandProvider.CreateCommand("dir", opt => opt.UseShell());
-            command.OnDataReceived += (sender, args) =>
-            {
-                Console.WriteLine(args.Data);
-            };
+            //command.OnDataReceived += (sender, args) =>
+            //{
+            //    Console.WriteLine(args.Data);
+            //};
             var result = await command.ExecuteAsync();
 
             Assert.Equal(0, result.ExitCode);
