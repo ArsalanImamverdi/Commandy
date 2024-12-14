@@ -52,7 +52,7 @@ namespace Commandy.Abstractions
         /// <summary>
         /// Specifies whether to start a new shell and run the command within.
         /// </summary>
-        /// <param name="useShell">A value indicating whether to use a shell. Defaults to <c>true</c>.</param>
+        /// <param name="useShell">A value indicating whether to use a shell. Defaults to <c>false</c>.</param>
         /// <returns>The current builder instance.</returns>
         ICommandOptionsBuilder UseShell(bool useShell = true);
 
