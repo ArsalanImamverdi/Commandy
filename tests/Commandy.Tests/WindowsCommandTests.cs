@@ -9,13 +9,9 @@ namespace Commandy.Tests
     public class WindowsCommandTests
     {
         [RunOnPlatformFact(OSPlatforms.Windows)]
-        public async Task RunCommand_WithShell_WhenSuccess_ShouldExitCodeBeZero()
+        public async Task RunCommand_WithoutShell_WhenSuccess_ShouldExitCodeBeZero()
         {
-            var command = CommandProvider.CreateCommand("dir", opt => opt.UseShell());
-            //command.OnDataReceived += (sender, args) =>
-            //{
-            //    Console.WriteLine(args.Data);
-            //};
+            var command = CommandProvider.CreateCommand("dir");
             var result = await command.ExecuteAsync();
 
             Assert.Equal(0, result.ExitCode);
@@ -34,16 +30,15 @@ namespace Commandy.Tests
 
             Assert.Equal(0, result.ExitCode);
             Assert.NotEmpty(evnt);
-
         }
 
         [RunOnPlatformFact(OSPlatforms.Windows)]
         public void RunCommand_WithShell_WhenCancel_ShouldExitCodeBeLessThanZeroAndContainsContentBeforeExit()
         {
-            var command = CommandProvider.CreateCommand("echo.bat");
+            var command = CommandProvider.CreateCommand("echo.bat", opt => opt.UseShell());
             var cancellation = new CancellationTokenSource();
             cancellation.CancelAfter(6000);
-            
+
             var result = command.Execute(cancellation.Token);
 
             Assert.Equal(-1, result.ExitCode);
@@ -111,13 +106,18 @@ namespace Commandy.Tests
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var commandProvider = serviceProvider.GetRequiredService<ICommandProvider>();
             var command = commandProvider.CreateCommand("dir", opt => opt.UseShell());
-            //command.OnDataReceived += (sender, args) =>
-            //{
-            //    Console.WriteLine(args.Data);
-            //};
             var result = await command.ExecuteAsync();
 
             Assert.Equal(0, result.ExitCode);
+        }
+
+        [RunOnPlatformFact(OSPlatforms.Windows)]
+        public async Task RunCommand_WithShell_WhenTimeout_ShouldExitCodeBeGreaterThanZero()
+        {
+            var command = CommandProvider.CreateCommand("echo.bat", opt => opt.UseShell().Timeout(TimeSpan.FromSeconds(1)));
+            var result = await command.ExecuteAsync();
+
+            Assert.True(result.ExitCode < 0);
         }
     }
 }

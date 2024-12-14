@@ -61,7 +61,7 @@ namespace Commandy.Internals.Command
 
         public virtual async Task<ICommandResult> RunAsync(CancellationToken cancellationToken, string input = null)
         {
-            await CommandProcess.Start(cancellationToken, input);
+            await CommandProcess.StartAsync(cancellationToken, input);
             return new CommandResult(CommandProcess.ExitCode, CommandProcess.OutputLog.ToString(), CommandProcess.ErrorLog.ToString());
         }
     }
