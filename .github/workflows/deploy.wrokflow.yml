@@ -74,6 +74,7 @@ jobs:
           PACKAGE_VERSION: ${{ github.ref_name }}
         run: |
           for i in {1..20}; do
+            dotnet nuget locals all --clear
             if dotnet package search "$PACKAGE_NAME" --exact-match | grep "$PACKAGE_VERSION"; then
               echo "Package is available on NuGet!"
               exit 0
