@@ -28,6 +28,12 @@ Install Commandy via NuGet:
 dotnet add package Commandy
 ```
 
+For DI capability:
+
+```
+dotnet add package Commandy.DependencyInjection
+```
+
 ## Quick Start
 
 Here's a simple example to get you started:
@@ -36,8 +42,8 @@ Here's a simple example to get you started:
 using Commandy;
 
 // Create and execute a command
-var result = Command.CreateCommand("echo", opt=>opt.AddArgument("Hello, World!")
-    .Execute();
+var result = CommandProvider.CreateCommand("echo", opt=>opt.AddArgument("Hello, World!")
+                            .Execute();
 
 Console.WriteLine($"Output: {result.Output}");
 Console.WriteLine($"Exit Code: {result.ExitCode}");
@@ -48,7 +54,7 @@ Console.WriteLine($"Exit Code: {result.ExitCode}");
 ### Asynchronous Execution
 
 ```csharp
-var command = Command.CreateCommand("long-running-process");
+var command = CommandProvider.CreateCommand("long-running-process");
 var result = await command.ExecuteAsync();
 ```
 
@@ -56,12 +62,12 @@ var result = await command.ExecuteAsync();
 
 ```csharp
 var command = CommandProvider.CreateCommand("git", opt => opt
-    .UseShell(false)
-    .AddEnvironmentVariable("GIT_CREDS_PATH", "/path/to/cred/file")
-    .AddArgument("clone")
-    .AddArgument("https://github.com/example/repo.git")
-    .WorkingDirectory("/path/to/directory")
-    .Timeout(TimeSpan.FromMinutes(5))
+                             .UseShell(false)
+                             .AddEnvironmentVariable("GIT_CREDS_PATH", "/path/to/cred/file")
+                             .AddArgument("clone")
+                             .AddArgument("https://github.com/example/repo.git")
+                             .WorkingDirectory("/path/to/directory")
+                             .Timeout(TimeSpan.FromMinutes(5))
 );
 ```
 
@@ -78,8 +84,7 @@ await command.ExecuteAsync();
 
 ```csharp
 var chainedCommand = CommandProvider.CreateCommand("echo", opt=>opt.AddArgument("Has Error!");
-var command = CommandProvider.CreateCommand("errory-command", opt => opt
-    .ChainTo(chaindedCommand,CommandChainType.Or)
+var command = CommandProvider.CreateCommand("errory-command", opt => opt.ChainTo(chaindedCommand,CommandChainType.Or)
 );
 var result = command.Execute();
 ```
@@ -88,10 +93,7 @@ var result = command.Execute();
 
 ```csharp
 var grepCommand = CommandProvider.CreateCommand("grep", opt=>opt.AddArgument("error");
-var command = CommandProvider.CreateCommand("cat", opt => opt
-    .AddArgument("log.txt")
-    .PipeTo(grepCommand)
-);
+var command = CommandProvider.CreateCommand("cat", opt => opt.AddArgument("log.txt").PipeTo(grepCommand));
 var result = command.Execute();
 ```
 
