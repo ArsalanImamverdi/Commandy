@@ -42,7 +42,7 @@ Here's a simple example to get you started:
 using Commandy;
 
 // Create and execute a command
-var result = CommandProvider.CreateCommand("echo", opt=>opt.AddArgument("Hello, World!")
+var result = CommandProvider.CreateCommand("echo", opt=>opt.AddArgument("Hello, World!"))
                             .Execute();
 
 Console.WriteLine($"Output: {result.Output}");
@@ -67,14 +67,14 @@ var command = CommandProvider.CreateCommand("git", opt => opt
                              .AddArgument("clone")
                              .AddArgument("https://github.com/example/repo.git")
                              .WorkingDirectory("/path/to/directory")
-                             .Timeout(TimeSpan.FromMinutes(5))
+                             .Timeout(TimeSpan.FromMinutes(5));
 );
 ```
 
 ### Event Handling
 
 ```csharp
-var command = Command.CreateCommand("dir");
+var command = CommandProvider.CreateCommand("dir");
 command.OnDataReceived += (sender, args) => Console.WriteLine($"Received: {args.Data}");
 command.OnErrorReceived += (sender, args) => Console.WriteLine($"Error: {args.Error}");
 await command.ExecuteAsync();
@@ -83,16 +83,15 @@ await command.ExecuteAsync();
 ### Command Chaining
 
 ```csharp
-var chainedCommand = CommandProvider.CreateCommand("echo", opt=>opt.AddArgument("Has Error!");
-var command = CommandProvider.CreateCommand("errory-command", opt => opt.ChainTo(chaindedCommand,CommandChainType.Or)
-);
+var chainedCommand = CommandProvider.CreateCommand("echo", opt => opt.AddArgument("Has Error!");
+var command = CommandProvider.CreateCommand("errory-command", opt => opt.ChainTo(chainedCommand, CommandChainType.Or));
 var result = command.Execute();
 ```
 
 ### Command Piping
 
 ```csharp
-var grepCommand = CommandProvider.CreateCommand("grep", opt=>opt.AddArgument("error");
+var grepCommand = CommandProvider.CreateCommand("grep", opt=>opt.AddArgument("error"));
 var command = CommandProvider.CreateCommand("cat", opt => opt.AddArgument("log.txt").PipeTo(grepCommand));
 var result = command.Execute();
 ```
@@ -114,7 +113,7 @@ public class MyService
 
     public void RunCommand()
     {
-        var command = _commandProvider.CreateCommand("echo", opt=>opt.AddArgument("Hello from DI!");
+        var command = _commandProvider.CreateCommand("echo", opt=>opt.AddArgument("Hello from DI!"));
         var result = command.Execute();
         Console.WriteLine(result.Output);
     }
@@ -123,7 +122,7 @@ public class MyService
 
 ### Documentation
 
-For full documentation, please visit our [Wiki](/wiki).
+For full documentation, please visit our [Wiki](https://github.com/ArsalanImamverdi/Commandy/wiki).
 
 ### License
 
